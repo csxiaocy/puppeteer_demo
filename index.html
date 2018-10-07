@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+        $(function() {
+            $("#submit-btn").click(function (event) {
+                event.preventDefault();
+                var username = $('input[name="username"]').val();
+                var password = $('input[name="password"]').val();
+                if (username && password){
+                    $.post({
+                        'url': '/login',
+                        'data': {
+                            'username': username,
+                            'password': password
+                        },
+                        'success': function (data) {
+                            $("#message").text(JSON.stringify(data));
+                        },
+                        'fail': function (error) {
+                            console.log(error);
+                        }
+                    })
+                }
+            })
+        });
+    </script>
+</head>
+<body>
+    <form action="" method="POST">
+        <table>
+            <tr>
+                <td>username:</td>
+                <td><input type="text" name="username"></td>
+            </tr>
+            <tr>
+                <td>password:</td>
+                <td><input type="password" name="password"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><button id="submit-btn" class="submit-btn">login</button></td>
+            </tr>
+        </table>
+        <p style="color:red;" id="message"></p>
+    </form>
+</body>
+</html>
