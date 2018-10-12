@@ -10,6 +10,8 @@ const checkUrl = 'https://sso.stu.edu.cn/login';
 // 输入密码
 // let password = '';
 
+const puppeteerBrowser = puppeteer.launch();
+
 function login(username, password) {
     /**
      * 参数类型：字符串
@@ -23,14 +25,10 @@ function login(username, password) {
     ];
 
     let p1 = new Promise((resolve, reject) => {
-        puppeteer.launch({ headless: true }).then(async browser => {
-
+        puppeteerBrowser.then(async browser => {
             const page = await browser.newPage();
             try {
-                // console.time('page.goto()用时:');
                 await page.goto(loginUrl);
-                // console.timeEnd('page.goto()用时:');
-                // console.time('登录及验证用时:');
                 await page.type('#username', username);
                 await page.type('#password', password);
 
@@ -44,23 +42,28 @@ function login(username, password) {
                     resolve(message[0]);
                 } else {
                     // console.log('账号不存在或密码错误');
-                    resolve(message[2]);
+                    reject(message[2]);
                 }
                 // console.timeEnd('登录及验证用时:');
             } catch (err) {
-                resolve(message[1]);
+                reject(message[1]);
+            } finally {
+                await page._client.send('Network.clearBrowserCookies');
+                await page.close();
+            // await browser.close();
             }
-            await browser.close();
         });
-
     });
 
     let p2 = new Promise((resolve, reject) => {
-        setTimeout(resolve, 10000, message[3]);
+        setTimeout(reject, 8000, message[3]);
     });
 
     return Promise.race([p1, p2])
         .then(value => {
+            return value;
+        })
+        .catch(value => {
             return value;
         });
 }
@@ -68,7 +71,6 @@ function login(username, password) {
 // 调用函数
 // login(username, password).then(value => {
 //     console.log(value);
-//     process.exit(0);
 // });
 
 module.exports = login;

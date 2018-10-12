@@ -8,6 +8,7 @@ const url = 'http://credit.stu.edu.cn/english/setlocale.aspx?locale=zh-cn';
 // 输入密码
 // let password = '';
 
+const puppeteerBrowser = puppeteer.launch();
 
 function login(username, password) {
     /**
@@ -23,45 +24,50 @@ function login(username, password) {
 
     let p1 = new Promise((resolve, reject) => {
 
-        puppeteer.launch().then(async browser => {
+        puppeteerBrowser.then(async browser => {
 
             const page = await browser.newPage();
 
             try {
-                // console.time('page.goto()用时:');
                 await page.goto(url);
-                // console.timeEnd('page.goto()用时:');
-                const loginUrl = await page.url();
 
-                // console.time('登录及验证用时:');
+                await page.on('dialog', value => {
+                    reject(message[2]);
+                });
+                // const loginUrl = await page.url();
+
                 await page.type('#txtUserID', username);
                 await page.type('#txtUserPwd', password);
 
                 await page.click('#btnLogon');
-                await page.waitFor(500);
 
-                const loginedUrl = await page.url();
+                await page.waitFor(100);
+                resolve(message[0]);
 
-                if (loginUrl !== loginedUrl) {
-                    resolve(message[0]);
-                } else {
-                    resolve(message[2]);
-                }
-
+                // const loginedUrl = await page.url();
+                // if (loginUrl !== loginedUrl) {
+                //     resolve(message[0]);
+                // } else {
+                //     reject(message[2]);
+                // }
                 // console.timeEnd('登录及验证用时:');
             } catch (err) {
-                resolve(message[1]);
+                reject(message[1]);
+            } finally {
+                await page.close();
             }
-            await browser.close();
         });
     });
 
     let p2 = new Promise((resolve, reject) => {
-        setTimeout(resolve, 7000, message[3]);
+        setTimeout(reject, 7000, message[3]);
     });
 
     return Promise.race([p1, p2])
         .then(value => {
+            return value;
+        })
+        .catch(value => {
             return value;
         });
 }

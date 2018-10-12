@@ -1,9 +1,8 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const fs = require('fs');
-const mystu = require('./mystu');
-// const credit = require('./credit');
+// const mystu = require('./mystu');
+const credit = require('./credit');
 const morgan = require('morgan');
 
 const urlencodedParser = bodyParser.urlencoded({ extended: true });
@@ -20,31 +19,22 @@ app.use(morgan(function (tokens, req, res) {
     ].join('   ');
 }));
 
-app.get('/', function (req, res) {
-    fs.readFile('index.html', 'utf-8', function (err, data) {
-        if (err) {
-            throw err;
-        }
-        res.end(data);
-    });
-});
-
 app.post('/login', urlencodedParser, function (req, res) {
 
     let username = req.body.username;
     let password = req.body.password;
 
-    mystu(username, password).then(value => {
-        // console.log(value);
-        res.send(value);
-        res.end();
-    });
-
-    // credit(username, password).then(value => {
-    //     // console.log(value);
+    // mystu(username, password).then(value => {
+    //     console.log(value);
     //     res.send(value);
     //     res.end();
     // });
+
+    credit(username, password).then(value => {
+        console.log(value);
+        res.send(value);
+        res.end();
+    });
 });
 
 app.listen(3000);
