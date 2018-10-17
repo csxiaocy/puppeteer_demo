@@ -1,8 +1,10 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+// const fs = require('fs');
 // const mystu = require('./mystu');
-const credit = require('./credit');
+// const credit = require('./credit');
+const getCourses = require('./course');
 const morgan = require('morgan');
 
 const urlencodedParser = bodyParser.urlencoded({ extended: true });
@@ -19,19 +21,42 @@ app.use(morgan(function (tokens, req, res) {
     ].join('   ');
 }));
 
-app.post('/login', urlencodedParser, function (req, res) {
+// let username;
+// let password;
 
+// app.get('/', function (req, res) {
+//     fs.readFile('index.html', 'utf-8', function (err, data) {
+//         if (err) {
+//             throw err;
+//         }
+//         res.end(data);
+//     });
+// });
+
+// app.post('/login', urlencodedParser, function (req, res) {
+
+//     let username = req.body.username;
+//     let password = req.body.password;
+
+//     // mystu(username, password).then(value => {
+//     //     console.log(value);
+//     //     res.send(value);
+//     //     res.end();
+//     // });
+
+//     credit(username, password).then(value => {
+//         console.log(value);
+//         res.send(value);
+//         res.end();
+//     });
+// });
+
+app.post('/course', urlencodedParser, function (req, res) {
     let username = req.body.username;
     let password = req.body.password;
-
-    // mystu(username, password).then(value => {
-    //     console.log(value);
-    //     res.send(value);
-    //     res.end();
-    // });
-
-    credit(username, password).then(value => {
-        console.log(value);
+    let yearValue = req.body.yearValue;
+    let semesterIndex = req.body.semesterIndex;
+    getCourses(username, password, yearValue, semesterIndex).then(value => {
         res.send(value);
         res.end();
     });
