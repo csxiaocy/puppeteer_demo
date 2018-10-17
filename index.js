@@ -59,6 +59,9 @@ app.post('/course', urlencodedParser, function (req, res) {
     getCourses(username, password, yearValue, semesterIndex).then(value => {
         res.send(value);
         res.end();
+    }).catch(value => {
+        res.send(value);
+        res.end();
     });
 });
 
