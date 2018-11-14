@@ -13,7 +13,7 @@ app.use(async ctx => {
         let password = data.password;
         let years = data.years;
         let semester = data.semester;
-        getCourses(username, password, years, semester).then(value => {
+        await getCourses(username, password, years, semester).then(value => {
             let result = { 'classes': value };
             ctx.body = result;
         }).catch(value => {
@@ -23,7 +23,7 @@ app.use(async ctx => {
 
     if (ctx.url === '/member' && ctx.method === 'POST') {
         let class_id = ctx.request.body.class_id;
-        getClassmates(class_id).then(result => {
+        await getClassmates(class_id).then(result => {
             ctx.body = result;
         });
     }
